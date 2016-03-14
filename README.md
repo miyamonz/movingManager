@@ -8,7 +8,7 @@ this app can use moving light easily
   - ofxXmlSEttings
 - addon
   - [ofxDatGui](https://github.com/braitsch/ofxDatGui)
-  - ofxAnimatable
+  - [ofxAnimatable](https://github.com/armadillu/ofxAnimatable)
 - my addon
-  - ofxDraggable
-  - ofxInnoPocket
+  - [ofxDraggable](https://github.com/miyamonz/ofxDraggable)
+  - [ofxInnoPocket](https://github.com/miyamonz/ofxInnoPocket)
