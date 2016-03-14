@@ -41,14 +41,19 @@ public:
             PointDefault* controlPoint1  = new PointDefault("controlPoint1");
             for(auto point : {startPoint, endPoint, controlPoint0, controlPoint1})
                 ml->add(point);
-            Settings* settings = new Settings("settings");
+            Settings* settings              = new Settings("settings");
+            ColorSettings* colorSettings    = new ColorSettings("colors");
             ml->addSettings(settings);
+            ml->addColorSettings(colorSettings);
             
             Leaf<float>* dimmer   = new Leaf<float>("dimmer",0,255);
             Leaf<float>* expand   = new Leaf<float>("expand",0,10);
             Leaf<float>* duration = new Leaf<float>("duration",0,10);
+            Leaf<string>* color   = new Leaf<string>("color");
+            
             for(auto i : {dimmer, expand, duration})
                 settings->add(i);
+            colorSettings->add(color);
          
             ml->setupGui();
         }
