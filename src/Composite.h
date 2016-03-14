@@ -24,6 +24,9 @@ public:
         string sameTagName = "";
         for(int i=0; i<children.size(); i++){
             string childTag = children[i]->tag;
+            if(!xml.tagExists(childTag)) {
+                xml.addTag(childTag);
+            }
             if(childTag == sameTagName) {
                 counter++;
                 r = xml.pushTag(childTag,counter);

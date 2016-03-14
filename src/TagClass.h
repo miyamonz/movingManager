@@ -13,6 +13,13 @@ public:
     T value;
     float min=0;
     float max=255;
+    T defaultValue;
+    Leaf(string _tag, T _default) : Leaf(_tag){
+        defaultValue = _default;
+    }
+    Leaf(string _tag, float _min, float _max, T _default) : Leaf(_tag, _min, _max){
+        defaultValue = _default;
+    }
     Leaf(string _tag, float _min, float _max) : Leaf(_tag){
         min = _min;
         max = _max;
@@ -21,7 +28,6 @@ public:
     
     int toVar(ofxXmlSettings &xml){
         ofLog() << "toVar " << tag << " value " << value;
-        T defaultValue;
         xml.popTag();
         value = xml.getValue(tag, defaultValue);
         xml.pushTag(tag);
@@ -33,13 +39,13 @@ public:
         return 1;
     }
 };
-class Settings : public Composite<Leaf<float>* >{
+class FloatSettings : public Composite<Leaf<float>* >{
 public:
-    Settings(string _tag) : Composite<Leaf<float>* >(_tag) {};
+    FloatSettings(string _tag) : Composite<Leaf<float>* >(_tag) {};
 };
-class ColorSettings : public Composite<Leaf<string>* >{
+class StringSettings : public Composite<Leaf<string>* >{
 public:
-    ColorSettings(string _tag) : Composite<Leaf<string>* >(_tag) {};
+    StringSettings(string _tag) : Composite<Leaf<string>* >(_tag) {};
 };
 //point
 class PointDefault{
@@ -68,25 +74,27 @@ public:
 class MovingLight :public Composite<PointDefault* > {
 public:
     //other child
-    Settings* settings;
-    ColorSettings* colorSetting;
-    void addSettings(Settings* _settings){
-        settings = _settings;
+    FloatSettings* floatSettings;
+    StringSettings* stringSettings;
+    void addFloatSettings(FloatSettings* _setting){
+        floatSettings = _setting;
     }
-    void addColorSettings(ColorSettings* _cSetting){
-        colorSetting = _cSetting;
+    void addStringSettings(StringSettings* _setting){
+        stringSettings = _setting;
     }
     ofxDraggableBezier* draggable   = new ofxDraggableBezier();
     ofxDatGui*          gui         = new ofxDatGui();
     ofxAnimatableFloat* anim        = new ofxAnimatableFloat();
     string              colorString = "white";
     ofColor             color;
+    string              goboString  = "open";
     MovingLight(string _tag) : Composite<PointDefault* >(_tag){};
     
     void setupGui(){
         gui->setWidth(160);
         gui->addDropdown("color", inno::getColorStrings());
-        for(auto i:settings->children){
+        gui->addDropdown("gobo",  inno::getGoboStrings());
+        for(auto i:floatSettings->children){
             gui->addSlider(i->tag,i->min,i->max)->bind(i->value);
         }
         gui->setVisible(false);
@@ -95,10 +103,20 @@ public:
         ofAddListener(ofEvents().update, this, &MovingLight::update);
     }
     void onDropdown(ofxDatGuiDropdownEvent e){
-        //color dropdown
-        colorSetting->children[0]->value = ofToLower(gui->getDropdown("color")->getSelected()->getLabel());
-        color       = inno::stringToColor(colorSetting->children[0]->value);
-        draggable->setInnerColor(color);  
+        ofLog() << e.parent;
+        //color
+        if(e.parent == 0){
+            //color dropdown
+            colorString = ofToLower(gui->getDropdown("color")->getSelected()->getLabel());
+            stringSettings->children[0]->value = colorString;
+            color       = inno::stringToColor(colorString);
+            draggable->setInnerColor(color);
+        }else if(e.parent == 1){
+            goboString = ofToLower(gui->getDropdown("gobo")->getSelected()->getLabel());
+            stringSettings->children[1]->value = goboString;
+        }
+        //gobo
+        
 
     }
     void update(ofEventArgs &e){
@@ -107,23 +125,29 @@ public:
         gui->setPosition(p.x, p.y);
         
         //draggable->expand = getByTag("expand").getValue();
-        draggable->expand = settings->children[1]->value;
+        draggable->expand = floatSettings->children[1]->value;
         draggable->param  = anim->val();
+        ofColor c = draggable->getInnerColor();
+        c.a = floatSettings->children[0]->value;
+        draggable->setInnerColor(c);
         anim->update(1.0f/ofGetFrameRate());
         
     }
     virtual int toVar(ofxXmlSettings &xml){
         int index = Composite<PointDefault*>::toVar(xml);
         //settings
-        xml.pushTag(settings->tag);
-        settings->toVar(xml);
+        xml.pushTag(floatSettings->tag);
+        floatSettings->toVar(xml);
         xml.popTag();
         //color settings
-        xml.pushTag(colorSetting->tag);
-        colorSetting->toVar(xml);
+        xml.pushTag(stringSettings->tag);
+        stringSettings->toVar(xml);
         xml.popTag();
-        
-        color       = inno::stringToColor(colorSetting->children[0]->value);
+        colorString = stringSettings->children[0]->value;
+        goboString  = stringSettings->children[1]->value;
+        gui->getDropdown("color")->select( ofFind(inno::getColorStrings(), colorString));
+        gui->getDropdown("gobo" )->select( ofFind(inno::getGoboStrings(),  goboString));
+        color       = inno::stringToColor(colorString);
         draggable->setInnerColor(color);
         
         //draggable <- points
@@ -138,11 +162,11 @@ public:
 
         int index = Composite<PointDefault*>::toXml(xml);
         xml.pushTag(tag,index);
-        settings->toXml(xml);
+        floatSettings->toXml(xml);
         xml.popTag();
         
         xml.pushTag(tag,index);
-        colorSetting->toXml(xml);
+        stringSettings->toXml(xml);
         xml.popTag();
         return index;
     }
@@ -153,7 +177,7 @@ public:
         anim->setRepeatType(PLAY_ONCE);
         anim->setCurve(EASE_IN_EASE_OUT);
         //float duration = getByTag("duration")->getFloat();
-        float duration = settings->children[2]->value;
+        float duration = floatSettings->children[2]->value;
         anim->setDuration(duration);
         anim->animateTo(1.0f);
         anim->pause();

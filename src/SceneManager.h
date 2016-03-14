@@ -42,19 +42,21 @@ public:
             PointDefault* controlPoint1  = new PointDefault("controlPoint1");
             for(auto point : {startPoint, endPoint, controlPoint0, controlPoint1})
                 ml->add(point);
-            Settings* settings              = new Settings("settings");
-            ColorSettings* colorSettings    = new ColorSettings("colors");
-            ml->addSettings(settings);
-            ml->addColorSettings(colorSettings);
+            FloatSettings* floatSettings      = new FloatSettings("settings");
+            StringSettings* stringSettings    = new StringSettings("colors");
+            ml->addFloatSettings(floatSettings);
+            ml->addStringSettings(stringSettings);
             
-            Leaf<float>* dimmer   = new Leaf<float>("dimmer",0,255);
-            Leaf<float>* expand   = new Leaf<float>("expand",0,10);
-            Leaf<float>* duration = new Leaf<float>("duration",0,10);
-            Leaf<string>* color   = new Leaf<string>("color");
-            
-            for(auto i : {dimmer, expand, duration})
-                settings->add(i);
-            colorSettings->add(color);
+            Leaf<float>* dimmer   = new Leaf<float>("dimmer",   0,255, 255);
+            Leaf<float>* expand   = new Leaf<float>("expand",   0,20,  0);
+            Leaf<float>* duration = new Leaf<float>("duration", 0,20,  0);
+            Leaf<float>* strobe   = new Leaf<float>("strobe",   0,100, 100);
+            Leaf<string>* color   = new Leaf<string>("color", "white");
+            Leaf<string>* gobo    = new Leaf<string>("gobo", "open");
+            for(auto i : {dimmer, expand, duration, strobe})
+                floatSettings->add(i);
+            for(auto i : {color, gobo})
+                stringSettings->add(i);
          
             ml->setupGui();
         }

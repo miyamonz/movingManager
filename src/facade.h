@@ -43,6 +43,9 @@ public:
         currentSceneNum = i;
         sm->selectScene(i);
     }
+    Scene* getCurrentScene(){
+        return sm->root->children[currentSceneNum];
+    }
     void nextScene(){
         selectScene(currentSceneNum+1);
     }
