@@ -8,6 +8,7 @@ void ofApp::setup(){
     sa->selectScene(0);
     //sa->sm->toVar();
     
+    receiver.setup(3020);
     sender.setup("localhost", 3003);
 }
 
@@ -20,6 +21,17 @@ void ofApp::update(){
         m.addIntArg(p.x);
         m.addIntArg(p.y);
     sender.sendMessage(m);
+    }
+    
+	while(receiver.hasWaitingMessages()){
+		ofxOscMessage m;
+		receiver.getNextMessage(m);
+        ofLog() << "in";
+		if(m.getAddress() == "/sendMovingManager"){
+            string receiveText = m.getArgAsString(0);
+            ofLog() << receiveText;
+            sa->resumeByText(receiveText);
+        }
     }
 }
 

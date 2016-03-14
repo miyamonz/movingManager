@@ -25,5 +25,6 @@ class ofApp : public ofBaseApp{
 		
     SceneApp* sa;
     
+    ofxOscReceiver receiver;
     ofxOscSender sender;
 };

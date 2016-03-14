@@ -25,6 +25,7 @@ public:
         xml.popTag();
         value = xml.getValue(tag, defaultValue);
         xml.pushTag(tag);
+        return 1;
     }
     int toXml(ofxXmlSettings &xml){
         ofLog() << tag << " " << value;
@@ -52,6 +53,7 @@ public:
         p.x = xml.getValue("x", 0.);
         p.y = xml.getValue("y", 0.);
 //        xml.popTag();
+        return 1;
     }
     int toXml(ofxXmlSettings &xml){
         int index = xml.addTag(tag);
@@ -128,6 +130,7 @@ public:
         for(auto i:{0,1,2,3}){
             draggable->setBezierPoint(i, children[i]->p);
         }
+        return index;
     }
     virtual int toXml(ofxXmlSettings &xml){
         for(auto i:{0,1,2,3})
@@ -175,6 +178,7 @@ public:
         for(auto moving : children){
             moving->draggable->disable();
             moving->draggable->ofxDraggable::hide();
+            moving->draggable->setPressed(false);
             moving->gui->setVisible(false);
         }
     }

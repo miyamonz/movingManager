@@ -25,10 +25,12 @@ public:
     void load(){
         sm->load();
         scm->setButtons(getSceneNum());
+        scm->load();
+
     };
     void save(){
         sm->save();
-        scm->setButtons(getSceneNum());
+        scm->save();
     };
     
     
@@ -71,5 +73,15 @@ public:
         Scene* currentScene = sm->root->children[currentSceneNum];
         currentScene->animInitAll();
         currentScene->animResumeAll();
+    }
+    
+    //osc
+    void resumeByText(string text){
+        int index = scm->findText(text);
+        if(index == -1) return;
+        selectScene(index);
+        resume();
+        
+
     }
 };

@@ -14,8 +14,9 @@ public:
     }
     
     void selectScene(int i){
-        for(auto scene : root->children)
+        for(auto scene : root->children) {
             scene->disable();
+        }
         root->children[i]->enable();
     }
     void insertScene(int index){
