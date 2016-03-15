@@ -19,8 +19,8 @@ void ofApp::update(){
         ofxOscMessage m;
         m.setAddress("/movingManager/" + ofToString(i) + "/point");
         ofPoint p = sa->getCurrentPoints()[i];
-        m.addIntArg(p.x);
-        m.addIntArg(p.y);
+        m.addFloatArg(p.x);
+        m.addFloatArg(p.y);
         sender.sendMessage(m);
         
         //color
