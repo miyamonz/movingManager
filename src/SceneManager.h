@@ -8,6 +8,8 @@ class SceneManager {
 public:
     Root* root = new Root("root");
     ofxXmlSettings xml;
+    
+    ofxDatGui* gui[4];
 
     SceneManager(){};
     void setup(){
@@ -20,7 +22,7 @@ public:
         root->children[i]->enable();
     }
     void insertScene(int index){
-        root->add(newScene());
+        //root->add(newScene());
     }
     void insertScene(){
         insertScene(0);
@@ -31,7 +33,7 @@ public:
         vector<int> keys{'q','w','e','r'};
         vector<ofColor> colors{ofColor::red,ofColor::green,ofColor::blue,ofColor::gray};
         for(auto i : {0,1,2,3}){
-            MovingLight* ml = new MovingLight("movingLight");
+            MovingLight* ml = new MovingLight("movingLight", gui[i]);
             scene->add(ml);
             ml->draggable->setKey(keys[i]);
             ml->draggable->setLineColor(colors[i]);

@@ -8,8 +8,8 @@ void ofApp::setup(){
     sa->selectScene(0);
     //sa->sm->toVar();
     
-    receiver.setup(3020);
-    sender.setup("localhost", 3021);
+    receiver.setup(3211);
+    sender.setup("localhost", 3210);
 }
 
 //--------------------------------------------------------------
@@ -17,7 +17,7 @@ void ofApp::update(){
     for(int i=0; i<MOVING_NUM; i++){
         //position
         ofxOscMessage m;
-        m.setAddress("/movingManager/" + ofToString(i) + "/point");
+        m.setAddress("/toMapper/" + ofToString(1) + "/" + ofToString(i) + "/point");
         ofPoint p = sa->getCurrentPoints()[i];
         m.addFloatArg(p.x);
         m.addFloatArg(p.y);
@@ -25,25 +25,25 @@ void ofApp::update(){
         
         //color
         m.clear();
-        m.setAddress("/movingManager/" + ofToString(i) + "/color");
+        m.setAddress("/toMapper/" + ofToString(1) + "/"  + ofToString(i) + "/color");
         m.addStringArg(sa->getCurrentScene()->children[i]->colorString);
         sender.sendMessage(m);
         
         //gobo
         m.clear();
-        m.setAddress("/movingManager/" + ofToString(i) + "/gobo");
+        m.setAddress("/toMapper/" + ofToString(1) + "/"  + ofToString(i) + "/gobo");
         m.addStringArg(sa->getCurrentScene()->children[i]->goboString);
         sender.sendMessage(m);
 
         //strobe
         m.clear();
-        m.setAddress("/movingManager/" + ofToString(i) + "/strobe");
+        m.setAddress("/toMapper/" + ofToString(1) + "/"  + ofToString(i) + "/strobe");
         m.addFloatArg(sa->getCurrentScene()->children[i]->floatSettings->children[3]->value);
         sender.sendMessage(m);
 
         //dimmer
         m.clear();
-        m.setAddress("/movingManager/" + ofToString(i) + "/dimmer");
+        m.setAddress("/toMapper/" + ofToString(0) + "/"  + ofToString(i) + "/dimmer");
         m.addFloatArg(sa->getCurrentScene()->children[i]->floatSettings->children[0]->value);
         sender.sendMessage(m);
 

@@ -83,12 +83,15 @@ public:
         stringSettings = _setting;
     }
     ofxDraggableBezier* draggable   = new ofxDraggableBezier();
-    ofxDatGui*          gui         = new ofxDatGui();
+    ofxDatGui*          gui         ;//= new ofxDatGui();
     ofxAnimatableFloat* anim        = new ofxAnimatableFloat();
     string              colorString = "white";
     ofColor             color;
     string              goboString  = "open";
-    MovingLight(string _tag) : Composite<PointDefault* >(_tag){};
+    MovingLight(string _tag, ofxDatGui *gui) : Composite<PointDefault* >(_tag){
+        this->gui = gui;
+        this->gui = new ofxDatGui();
+    };
     
     void setupGui(){
         gui->setWidth(160);
